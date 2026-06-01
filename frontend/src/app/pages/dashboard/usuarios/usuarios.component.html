@@ -1,0 +1,109 @@
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl border border-slate-200 shadow-xl space-y-6">
+  
+  <div class="border-b border-slate-100 pb-4">
+    <h1 class="text-2xl font-black text-slate-800 tracking-tight">👥 Registro de Personal y Asignación de Roles</h1>
+    <p class="text-sm text-slate-500">Módulo de alta para nuevos trabajadores en la infraestructura MultiTienda.</p>
+  </div>
+
+  <form (submit)="registrarUsuarioDB()" class="space-y-4">
+    
+    <div class="space-y-1">
+      <label class="text-xs font-bold text-slate-600 uppercase">Sucursal / Tienda de Destino (tienda_id)</label>
+      
+      <select 
+        *ngIf="currentRolLogueado === 'dueño'"
+        name="tienda_id"
+        [(ngModel)]="usuarioModel.tienda_id"
+        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium text-slate-800 focus:outline-none focus:border-blue-500"
+      >
+        <option [ngValue]="null" disabled selected>-- Selecciona una sucursal disponible --</option>
+        <option *ngFor="let tienda of tiendasDisponibles" [ngValue]="tienda.id">
+          {{ tienda.nombre }} (ID: {{ tienda.id }})
+        </option>
+      </select>
+
+      <input 
+        *ngIf="currentRolLogueado === 'administrador'"
+        type="text" 
+        [value]="'Anclado automáticamente a tu Tienda asignada (ID: ' + miTiendaId + ')'"
+        disabled 
+        class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed text-sm font-medium"
+      />
+    </div>
+
+    <div class="space-y-1">
+      <label class="text-xs font-bold text-slate-600 uppercase">Rol del Nuevo Usuario</label>
+      
+      <select 
+        *ngIf="currentRolLogueado === 'dueño'"
+        name="rol"
+        [(ngModel)]="usuarioModel.rol"
+        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium text-slate-800 focus:outline-none focus:border-blue-500"
+      >
+        <option value="cajero">Cajero / Tendero (Módulo de Ventas Ordinario)</option>
+        <option value="administrador">Administrador de Sucursal (Gestión de Stock y Precios)</option>
+      </select>
+
+      <input 
+        *ngIf="currentRolLogueado === 'administrador'"
+        type="text" 
+        value="Cajero / Tendero (Restringido por nivel de seguridad)"
+        disabled 
+        class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed text-sm font-medium"
+      />
+    </div>
+
+    <hr class="border-slate-100 my-4">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <div class="space-y-1 md:col-span-2">
+        <label class="text-xs font-bold text-slate-700 uppercase">Nombre Completo del Trabajador</label>
+        <input 
+          type="text" 
+          name="nombre"
+          [(ngModel)]="usuarioModel.nombre"
+          placeholder="Ej: Carlos Gómez" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500"
+          required
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-700 uppercase">Correo Electrónico (Único)</label>
+        <input 
+          type="email" 
+          name="correo"
+          [(ngModel)]="usuarioModel.correo"
+          placeholder="carlos@tienda.com" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500"
+          required
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-700 uppercase">Contraseña de Acceso</label>
+        <input 
+          type="password" 
+          name="password"
+          [(ngModel)]="usuarioModel.password"
+          placeholder="••••••••" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500"
+          required
+        />
+      </div>
+
+    </div>
+
+    <div class="pt-4 flex justify-end">
+      <button 
+        type="submit" 
+        class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 active:scale-[0.99] transition-all"
+      >
+        ➕ REGISTRAR NUEVO EMPLEADO
+      </button>
+    </div>
+
+  </form>
+
+</div>
