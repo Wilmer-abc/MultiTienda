@@ -1,0 +1,187 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 flex flex-col justify-center items-center p-4 relative overflow-hidden">
+  
+  <!-- Elementos decorativos flotantes -->
+  <div class="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+  <div class="absolute bottom-20 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+
+  <!-- Tarjeta principal -->
+  <div class="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 space-y-6 transform transition-all duration-300 hover:scale-105 hover:shadow-3xl relative z-10">
+    
+    <!-- Línea decorativa superior -->
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-t-2xl"></div>
+
+    <!-- Header -->
+    <div class="text-center space-y-3">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mx-auto shadow-lg transform -rotate-6">
+        <span class="text-3xl">🏪</span>
+      </div>
+      <h1 class="text-4xl font-extrabold bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
+        MultiTienda
+      </h1>
+      <p class="text-sm text-slate-600 font-medium">Ingresa tus credenciales para acceder al punto de venta</p>
+    </div>
+
+    <!-- Mensaje de error general -->
+    <div *ngIf="errorMensaje" class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 animate-shake">
+      <div class="flex items-start space-x-3">
+        <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-red-800">{{ errorMensaje }}</p>
+        </div>
+        <button (click)="errorMensaje = null" class="text-red-500 hover:text-red-700">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form (ngSubmit)="ejecutarLogin()" class="space-y-5">
+      
+      <!-- Campo email con validación -->
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider block">
+          Correo Electrónico
+          <span class="text-red-500">*</span>
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+            </svg>
+          </div>
+          <input 
+            type="email" 
+            name="correo"
+            [(ngModel)]="credenciales.correo"
+            (blur)="marcarTocado('correo'); validarCampo('correo')"
+            (input)="validarCampo('correo')"
+            placeholder="nombre@tienda.com" 
+            [class.border-red-500]="touched.correo && erroresValidacion.correo"
+            [class.border-green-500]="touched.correo && !erroresValidacion.correo && credenciales.correo"
+            class="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 rounded-xl text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+            required
+          />
+          <!-- Ícono de validación -->
+          <div *ngIf="touched.correo && credenciales.correo && !erroresValidacion.correo" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+        <!-- Mensaje de error específico para email -->
+        <div *ngIf="touched.correo && erroresValidacion.correo" class="flex items-center space-x-1 text-red-500 text-xs animate-fadeIn">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>{{ erroresValidacion.correo }}</span>
+        </div>
+      </div>
+
+      <!-- Campo password CON EL OJITO y validación -->
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider block">
+          Contraseña
+          <span class="text-red-500">*</span>
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <input 
+            [type]="mostrarPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="credenciales.password"
+            (blur)="marcarTocado('password'); validarCampo('password')"
+            (input)="validarCampo('password')"
+            placeholder="••••••••" 
+            [class.border-red-500]="touched.password && erroresValidacion.password"
+            [class.border-green-500]="touched.password && !erroresValidacion.password && credenciales.password"
+            class="w-full pl-10 pr-12 py-3 bg-slate-50 border-2 rounded-xl text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+            required
+          />
+          <!-- Botón del ojito -->
+          <button 
+            type="button"
+            (click)="toggleMostrarPassword()"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors duration-200 focus:outline-none"
+            tabindex="-1"
+          >
+            <!-- Icono ojo abierto -->
+            <svg *ngIf="mostrarPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <!-- Icono ojo cerrado -->
+            <svg *ngIf="!mostrarPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          </button>
+        </div>
+        <!-- Mensaje de error específico para password -->
+        <div *ngIf="touched.password && erroresValidacion.password" class="flex items-center space-x-1 text-red-500 text-xs animate-fadeIn">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>{{ erroresValidacion.password }}</span>
+        </div>
+        <!-- Indicador de seguridad de contraseña -->
+        <div *ngIf="touched.password && credenciales.password && !erroresValidacion.password" class="flex items-center space-x-2">
+          <div class="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+            <div class="h-full transition-all duration-300" 
+                 [ngClass]="{
+                   'w-1/3 bg-red-500': credenciales.password.length < 6,
+                   'w-2/3 bg-yellow-500': credenciales.password.length >= 6 && credenciales.password.length < 8,
+                   'w-full bg-green-500': credenciales.password.length >= 8
+                 }">
+            </div>
+          </div>
+          <span class="text-xs text-slate-500">
+            <span *ngIf="credenciales.password.length < 6">Débil</span>
+            <span *ngIf="credenciales.password.length >= 6 && credenciales.password.length < 8">Media</span>
+            <span *ngIf="credenciales.password.length >= 8">Fuerte</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Botón submit -->
+      <button 
+        type="submit" 
+        [disabled]="cargando"
+        class="relative w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 overflow-hidden group"
+      >
+        <span class="relative z-10 flex items-center justify-center space-x-2">
+          <svg *ngIf="!cargando" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+          </svg>
+          <svg *ngIf="cargando" class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>{{ cargando ? 'Validando credenciales...' : 'Iniciar Sesión' }}</span>
+        </span>
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+      </button>
+
+      <!-- Enlace de ayuda (opcional) -->
+      <div class="text-center text-xs">
+        <a href="#" class="text-slate-500 hover:text-blue-600 transition-colors duration-200">
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="text-center pt-4">
+      <span class="text-xs text-slate-500">Sistema MultiTienda v1.0 • Seguridad Blindada</span>
+    </div>
+
+  </div>
+</div>
