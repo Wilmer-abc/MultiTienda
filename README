@@ -1,0 +1,26 @@
+LIBRERIAS PARA EL LOGIN
+pnpm add bcrypt
+pnpm add -D @types/bcrypt
+
+
+LIBRERIAS PARA JWT Y PASSPORT
+pnpm add @nestjs/jwt @nestjs/passport passport passport-jwt
+pnpm add -D @types/passport-jwt
+
+
+
+PARA AGREGAR DATOS A NUESTRO MYSQL EN LUGAR DE POSTAMN UTILIZAMOS 
+pnpm exec prisma studio
+
+
+========= INSTALACION DE ANGULAR ==========
+pnpm add -g @angular/cli
+"ng new frontend --routing --style css --ssr false"
+
+intalamos  Instala Tailwind y sus dependencias:
+pnpm add -D tailwindcss postcss autoprefixer
+
+
+Inicializa el archivo de configuración
+npx tailcss init -p
+
