@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "outDir": "./dist",
+    "incremental": true,
+    "sourceMap": true,
+    
+    /* ESTAS DOS LÍNEAS VAN A IGNORAR EL ERROR DEL ARCHIVO FANTASMA */
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "generated"
+  ]
+}
