@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model compras {
+  id           Int       @id @default(autoincrement())
+  tienda_id    Int
+  proveedor_id Int
+  usuario_id   Int
+  fecha        DateTime? @default(now()) @db.Timestamp(0)
+  total        Decimal   @db.Decimal(10, 2)
+
+  @@index([proveedor_id], map: "proveedor_id")
+  @@index([tienda_id], map: "tienda_id")
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model detalle_compras {
+  id           Int     @id @default(autoincrement())
+  compra_id    Int
+  producto_id  Int
+  cantidad     Int
+  precio_costo Decimal @db.Decimal(10, 2)
+
+  @@index([compra_id], map: "compra_id")
+  @@index([producto_id], map: "producto_id")
+}
+
+model detalle_ventas {
+  id              Int     @id @default(autoincrement())
+  venta_id        Int
+  producto_id     Int
+  cantidad        Int
+  precio_unitario Decimal @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(10, 2)
+
+  @@index([producto_id], map: "producto_id")
+  @@index([venta_id], map: "venta_id")
+}
+
+model inventarios {
+  id                         Int      @id @default(autoincrement())
+  tienda_id                  Int
+  producto_id                Int
+  stock                      Int?     @default(0)
+  precio_venta_personalizado Decimal? @db.Decimal(10, 2)
+
+  @@unique([tienda_id, producto_id], map: "unique_tienda_producto")
+  @@index([producto_id], map: "producto_id")
+}
+
+model productos {
+  id                Int     @id @default(autoincrement())
+  codigo_barra      String  @unique(map: "codigo_barra") @db.VarChar(50)
+  nombre            String  @db.VarChar(150)
+  descripcion       String? @db.Text
+  imagen_url        String? @db.VarChar(255)
+  precio_costo_base Decimal @db.Decimal(10, 2)
+  precio_venta_base Decimal @db.Decimal(10, 2)
+
+  @@index([codigo_barra], map: "idx_codigo_barra")
+}
+
+model proveedores {
+  id       Int     @id @default(autoincrement())
+  nombre   String  @db.VarChar(150)
+  contacto String? @db.VarChar(100)
+  telefono String? @db.VarChar(20)
+}
+
+model tiendas {
+  id         Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(100)
+  direccion  String    @db.VarChar(255)
+  telefono   String?   @db.VarChar(20)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model usuarios {
+  id        Int          @id @default(autoincrement())
+  tienda_id Int?
+  nombre    String       @db.VarChar(100)
+  correo    String       @unique(map: "correo") @db.VarChar(100)
+  password  String       @db.VarChar(255)
+  rol       usuarios_rol
+  activo    Boolean?     @default(true)
+
+  @@index([tienda_id], map: "tienda_id")
+}
+
+model ventas {
+  id          Int                @id @default(autoincrement())
+  tienda_id   Int
+  usuario_id  Int
+  fecha       DateTime?          @default(now()) @db.Timestamp(0)
+  total       Decimal            @db.Decimal(10, 2)
+  metodo_pago ventas_metodo_pago
+
+  @@index([tienda_id], map: "tienda_id")
+  @@index([usuario_id], map: "usuario_id")
+}
+
+enum usuarios_rol {
+  due_o         @map("dueño")
+  administrador
+  cajero
+}
+
+enum ventas_metodo_pago {
+  efectivo
+  tarjeta
+  transferencia
+}
