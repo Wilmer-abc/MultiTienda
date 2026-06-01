@@ -1,0 +1,172 @@
+<div *ngIf="esAdminValido" class="max-w-4xl mx-auto space-y-6">
+  
+  <div class="border-b border-slate-200 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+    <div>
+      <h1 class="text-2xl font-black text-slate-800 tracking-tight">Catálogo General de Productos</h1>
+      <p class="text-sm text-slate-500">Altas e inserciones directas a la tabla general de la base de datos.</p>
+    </div>
+    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase tracking-wider">
+      Nivel: Administrador
+    </span>
+  </div>
+
+  <!-- Mensaje de alerta (error) mejorado -->
+  <div *ngIf="mensajeAlerta" class="bg-rose-50 ... animate-fadeIn shadow-lg">
+    <div class="flex items-start space-x-3">
+      <svg class="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+      <div class="flex-1">
+        <p class="font-bold mb-1">⚠️ Producto Duplicado</p>
+        <p class="whitespace-pre-line text-sm">{{ mensajeAlerta }}</p>
+      </div>
+      <button (click)="mensajeAlerta = null" class="text-rose-500 hover:text-rose-700">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  <div *ngIf="mensajeExito" class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 p-4 rounded-r-xl text-sm font-medium flex items-center space-x-2 animate-fadeIn">
+    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+    </svg>
+    <span>{{ mensajeExito }}</span>
+  </div>
+
+  <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <form (submit)="escanearCodigo()">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2"> Entrada del Escáner (codigo_barra)</label>
+      <div class="flex gap-2">
+        <input 
+          type="text" 
+          name="codigoBuscado"
+          [(ngModel)]="codigoBuscado"
+          [disabled]="modoRegistro || verificandoCodigo"
+          placeholder="Escanear el código de barra del nuevo producto..." 
+          class="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-lg text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white disabled:opacity-50 transition-all"
+          autofocus
+        />
+        <button 
+          type="submit" 
+          [disabled]="modoRegistro || verificandoCodigo"
+          class="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white font-semibold rounded-xl transition-colors shadow-md shadow-blue-500/10"
+        >
+          <span *ngIf="!verificandoCodigo">Validar Código</span>
+          <span *ngIf="verificandoCodigo" class="flex items-center space-x-2">
+            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Verificando...</span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="modoRegistro" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl space-y-6">
+    
+    <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">SQL INSERT • Nueva Fila en Tabla `productos`</h3>
+        <p class="text-xs text-slate-400 font-mono">Generando asignación global única</p>
+      </div>
+      <div class="bg-slate-900 text-emerald-400 font-mono text-sm font-bold px-4 py-1.5 rounded-xl border border-slate-800">
+        id: AUTO_INCREMENT
+      </div>
+    </div>
+
+    <form (submit)="guardarProductoGlobal()" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      
+      <div class="space-y-1 md:col-span-2">
+        <label class="text-xs font-bold text-slate-500 uppercase font-mono">codigo_barra (Llave Única)</label>
+        <input 
+          type="text" 
+          [value]="productoModel.codigo_barra" 
+          disabled 
+          class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl font-mono text-slate-500 cursor-not-allowed"
+        />
+      </div>
+
+      <div class="space-y-1 md:col-span-2">
+        <label class="text-xs font-bold text-slate-700 uppercase">Nombre del Producto *</label>
+        <input 
+          type="text" 
+          name="nombre"
+          [(ngModel)]="productoModel.nombre"
+          placeholder="Ej: Tortrix Limón 45g, Jugo Del Frutal Lata" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          required
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-700 uppercase">Precio Costo Base (Q) *</label>
+        <input 
+          type="number" 
+          name="precio_costo_base"
+          step="0.01"
+          [(ngModel)]="productoModel.precio_costo_base"
+          placeholder="0.00" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl font-mono text-slate-800 focus:outline-none focus:border-blue-500"
+          required
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-700 uppercase">Precio Venta Base (Q) *</label>
+        <input 
+          type="number" 
+          name="precio_venta_base"
+          step="0.01"
+          [(ngModel)]="productoModel.precio_venta_base"
+          placeholder="0.00" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl font-mono text-slate-800 focus:outline-none focus:border-blue-500"
+          required
+        />
+      </div>
+
+      <div class="space-y-1 md:col-span-2">
+        <label class="text-xs font-bold text-slate-700 uppercase">URL de la Imagen (imagen_url)</label>
+        <input 
+          type="url" 
+          name="imagen_url"
+          [(ngModel)]="productoModel.imagen_url"
+          placeholder="https://tu-servidor.com/imagenes/producto.jpg" 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div class="space-y-1 md:col-span-2">
+        <label class="text-xs font-bold text-slate-700 uppercase">Descripción / Detalles (descripcion)</label>
+        <textarea 
+          name="descripcion"
+          [(ngModel)]="productoModel.descripcion"
+          rows="3"
+          placeholder="Especificaciones del producto, empaque, alertas de distribución..." 
+          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500"
+        ></textarea>
+      </div>
+
+      <div class="md:col-span-2 flex justify-end gap-3 pt-4 border-t border-slate-100">
+        <button 
+          type="button" 
+          (click)="cancelarRegistro()"
+          class="px-5 py-2.5 border border-slate-200 text-slate-500 font-semibold rounded-xl hover:bg-slate-50 transition-colors"
+        >
+          Cancelar Inserción
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="verificandoCodigo"
+          class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all"
+        >
+          GUARDAR PRODUCTO
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
