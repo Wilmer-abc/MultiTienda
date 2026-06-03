@@ -8,7 +8,7 @@ export class AuthService {
   constructor(
     private usuariosService: UsuariosService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async login(loginDto: any) {
     const { correo, password } = loginDto;
@@ -36,6 +36,7 @@ export class AuthService {
       correo: usuario.correo,
       rol: usuario.rol,
       tiendaId: usuario.tienda_id,
+      empresaId: usuario.empresa_id,
     };
 
     // 5. Firmar el Token y devolverlo junto con los datos públicos del usuario
@@ -47,6 +48,7 @@ export class AuthService {
         correo: usuario.correo,
         rol: usuario.rol,
         tiendaId: usuario.tienda_id,
+        empresaId: usuario.empresa_id,
       },
     };
   }

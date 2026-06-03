@@ -57,10 +57,16 @@ export class LoginComponent {
         // Agregamos un console.log temporal para que veas EXACTAMENTE qué te responde NestJS
         console.log('Respuesta exitosa del Backend:', res);
 
-        if (res.usuario && res.usuario.rol === 'cajero') {
-          this.router.navigate(['/dashboard/ventas']);
+        // Redirección basada en la nueva arquitectura SaaS
+        const rol = res.usuario.rol;
+        
+        if (rol === 'superadmin') {
+          this.router.navigate(['/superadmin']);
+        } else if (rol === 'cajero') {
+          this.router.navigate(['/panel/pos']);
         } else {
-          this.router.navigate(['/dashboard']);
+          // dueño o administrador
+          this.router.navigate(['/panel/dashboard']);
         }
       },
       error: (err) => {

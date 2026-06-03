@@ -7,31 +7,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
-// Estructura idéntica a tu tabla 'productos' de MySQL
-interface ProductoMySQL {
-  codigo_barra: string;
-  nombre: string;
-  descripcion: string;
-  imagen_url: string;
-  precio_costo_base: number | null;
-  precio_venta_base: number | null;
-}
-
-@Injectable({ providedIn: 'root' })
-export class ProductosService {
-  private urlAPI = 'http://localhost:3000/api/productos/crear';
-
-  constructor(private http: HttpClient) {}
-
-  guardarEnBackend(producto: any): Observable<any> {
-    return this.http.post(this.urlAPI, producto);
-  }
-
-  // Nuevo método para verificar si un código de barra existe
-  verificarCodigoBarra(codigo: string): Observable<any> {
-    return this.http.get(`http://localhost:3000/api/productos/verificar/${codigo}`);
-  }
-}
+import { ProductosService, ProductoMySQL } from '../../../core/services/productos.service';
 
 @Component({
   selector: 'app-productos',

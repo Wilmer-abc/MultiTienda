@@ -1,78 +1,96 @@
-<div class="min-h-screen bg-slate-100 flex flex-col md:flex-row">
-  
-  <header class="bg-blue-600 text-white px-4 py-3 flex justify-between items-center md:hidden shadow-md">
-    <span class="font-bold tracking-tight text-lg">MultiTienda 🛒</span>
-    <button (click)="logout()" class="p-2 bg-blue-700 active:bg-blue-800 rounded-lg text-sm transition-colors">
-      Salir
-    </button>
-  </header>
-
-  <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 hidden md:flex flex-col border-r border-slate-800">
-    <div class="p-6 border-b border-slate-800 bg-slate-950 flex flex-col">
-      <span class="text-xl font-black text-white tracking-wide">MultiTienda</span>
-      <span class="text-xs text-blue-400 font-medium mt-1 uppercase tracking-wider">Módulo de Tienda</span>
-    </div>
-
-      <nav class="flex-1 p-4 space-y-2">
-        
-        <a 
-          routerLink="/dashboard/ventas" 
-          routerLinkActive="bg-blue-600 text-white" 
-          class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all font-medium"
-        >
-          <span>🛍️</span>
-          <span>Punto de Venta</span>
-        </a>
-
-        <ng-container *ngIf="usuarioLogueado?.rol === 'administrador' || usuarioLogueado?.rol === 'dueño'">
-          
-          <a 
-            routerLink="/dashboard/productos" 
-            routerLinkActive="bg-blue-600 text-white" 
-            class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all font-medium"
-          >
-            <span>📦</span>
-            <span>Catálogo Global</span>
-          </a>
-
-          <a 
-            routerLink="/dashboard/usuarios" 
-            routerLinkActive="bg-blue-600 text-white" 
-            class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all font-medium"
-          >
-            <span>👥</span>
-            <span>Gestionar Personal</span>
-          </a>
-
-        </ng-container>
-      </nav>
-
-    <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex flex-col space-y-3">
-      <div class="flex flex-col">
-        <span class="text-sm font-semibold text-white">{{ usuarioLogueado?.nombre || 'Usuario' }}</span>
-        <span class="text-xs text-slate-400 capitalize">Rol: {{ usuarioLogueado?.rol }}</span>
+<div class="space-y-6">
+  <!-- Tarjetas de Resumen -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-blue-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-600/20">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-blue-200 text-sm font-bold uppercase tracking-wider mb-1">Ventas de Hoy</p>
+          <h3 class="text-3xl font-black">Q 1,250.00</h3>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+          <span class="material-icons">trending_up</span>
+        </div>
       </div>
-      <button 
-        (click)="logout()" 
-        class="w-full py-2 bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white text-sm font-medium rounded-lg border border-rose-500/30 transition-all duration-150 text-center"
-      >
-        Cerrar Sesión
-      </button>
+      <p class="text-xs text-blue-200 mt-4 font-medium">+15% comparado con ayer</p>
     </div>
-  </aside>
 
-  <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-    <div class="hidden md:flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200/60">
-      <h2 class="text-lg font-bold text-slate-700">Punto de Venta Activo • Tienda #{{ usuarioLogueado?.tiendaId }}</h2>
-      <div class="text-sm text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
-        Sesión iniciada como: <strong class="text-slate-700">{{ usuarioLogueado?.correo }}</strong>
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Cuentas por Cobrar</p>
+          <h3 class="text-3xl font-black text-slate-800">Q 450.00</h3>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+          <span class="material-icons">account_balance_wallet</span>
+        </div>
       </div>
+      <p class="text-xs text-amber-600 mt-4 font-bold flex items-center gap-1">
+        <span class="material-icons text-[14px]">warning</span> 3 clientes pendientes
+      </p>
     </div>
 
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 min-h-[calc(100vh-12rem)]">
-      <router-outlet></router-outlet>
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Stock Bajo</p>
+          <h3 class="text-3xl font-black text-slate-800">12</h3>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+          <span class="material-icons">inventory_2</span>
+        </div>
+      </div>
+      <p class="text-xs text-rose-600 mt-4 font-bold flex items-center gap-1">
+        <span class="material-icons text-[14px]">error</span> Requiere resurtir pronto
+      </p>
     </div>
-  </main>
+  </div>
+
+  <!-- Alertas Importantes -->
+  <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+      <h3 class="text-base font-bold text-slate-800">Alertas de Tienda</h3>
+      <button class="text-blue-600 text-sm font-bold hover:underline">Ver todo</button>
+    </div>
+    <div class="divide-y divide-slate-100">
+      
+      <!-- Alerta Caducidad -->
+      <div class="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+        <div class="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center flex-shrink-0 text-rose-500">
+          <span class="material-icons">timer</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-bold text-slate-800">Productos por Caducar</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Leche Deslactosada (5 uds) caduca mañana.</p>
+        </div>
+        <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">Revisar</button>
+      </div>
+
+      <!-- Alerta Stock -->
+      <div class="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center flex-shrink-0 text-amber-500">
+          <span class="material-icons">warning</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-bold text-slate-800">Stock Mínimo Alcanzado</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Coca Cola 600ml está en 2 unidades.</p>
+        </div>
+        <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">Pedir</button>
+      </div>
+
+      <!-- Alerta Cuentas por Cobrar -->
+      <div class="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center flex-shrink-0 text-emerald-600">
+          <span class="material-icons">payments</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-bold text-slate-800">Cobro Pendiente</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Don José debe Q 150.00 desde hace 15 días.</p>
+        </div>
+        <button class="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg hover:bg-emerald-200">Cobrar</button>
+      </div>
+
+    </div>
+  </div>
 
 </div>
 

@@ -7,6 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model empresas {
+  id                    Int                      @id @default(autoincrement())
+  nombre                String                   @db.VarChar(150)
+  identificacion_fiscal String?                  @db.VarChar(50)
+  plan_contratado       empresas_plan_contratado
+  limite_tiendas        Int
+  activo                Boolean?                 @default(true)
+  created_at            DateTime?                @default(now()) @db.Timestamp(0)
+
+  // Relaciones inversas
+  tiendas               tiendas[]
+  productos             productos[]
+  proveedores           proveedores[]
+  usuarios              usuarios[]
+  clientes              clientes[]
+}
+
 model compras {
   id           Int       @id @default(autoincrement())
   tienda_id    Int
@@ -44,68 +61,124 @@ model detalle_ventas {
 }
 
 model inventarios {
-  id                         Int      @id @default(autoincrement())
+  id                         Int       @id @default(autoincrement())
   tienda_id                  Int
   producto_id                Int
-  stock                      Int?     @default(0)
-  precio_venta_personalizado Decimal? @db.Decimal(10, 2)
+  stock                      Int?      @default(0)
+  stock_minimo               Int?      @default(5)
+  fecha_caducidad            DateTime? @db.Date
+  precio_venta_personalizado Decimal?  @db.Decimal(10, 2)
 
   @@unique([tienda_id, producto_id], map: "unique_tienda_producto")
   @@index([producto_id], map: "producto_id")
 }
 
 model productos {
-  id                Int     @id @default(autoincrement())
-  codigo_barra      String  @unique(map: "codigo_barra") @db.VarChar(50)
-  nombre            String  @db.VarChar(150)
-  descripcion       String? @db.Text
-  imagen_url        String? @db.VarChar(255)
-  precio_costo_base Decimal @db.Decimal(10, 2)
-  precio_venta_base Decimal @db.Decimal(10, 2)
+  id                Int       @id @default(autoincrement())
+  empresa_id        Int?
+  codigo_barra      String    @db.VarChar(50)
+  nombre            String    @db.VarChar(150)
+  descripcion       String?   @db.Text
+  imagen_url        String?   @db.VarChar(255)
+  precio_costo_base Decimal   @db.Decimal(10, 2)
+  precio_venta_base Decimal   @db.Decimal(10, 2)
 
-  @@index([codigo_barra], map: "idx_codigo_barra")
+  empresa           empresas? @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+
+  @@unique([empresa_id, codigo_barra], map: "unique_codigo_barra_empresa")
+  @@index([empresa_id], map: "empresa_id")
 }
 
 model proveedores {
-  id       Int     @id @default(autoincrement())
-  nombre   String  @db.VarChar(150)
-  contacto String? @db.VarChar(100)
-  telefono String? @db.VarChar(20)
+  id         Int       @id @default(autoincrement())
+  empresa_id Int?
+  nombre     String    @db.VarChar(150)
+  contacto   String?   @db.VarChar(100)
+  telefono   String?   @db.VarChar(20)
+
+  empresa    empresas? @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+
+  @@index([empresa_id], map: "empresa_id")
 }
 
 model tiendas {
   id         Int       @id @default(autoincrement())
+  empresa_id Int?
   nombre     String    @db.VarChar(100)
   direccion  String    @db.VarChar(255)
   telefono   String?   @db.VarChar(20)
   created_at DateTime? @default(now()) @db.Timestamp(0)
+
+  empresa    empresas? @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+
+  @@index([empresa_id], map: "empresa_id")
 }
 
 model usuarios {
-  id        Int          @id @default(autoincrement())
-  tienda_id Int?
-  nombre    String       @db.VarChar(100)
-  correo    String       @unique(map: "correo") @db.VarChar(100)
-  password  String       @db.VarChar(255)
-  rol       usuarios_rol
-  activo    Boolean?     @default(true)
+  id         Int          @id @default(autoincrement())
+  empresa_id Int?
+  tienda_id  Int?
+  nombre     String       @db.VarChar(100)
+  correo     String       @unique(map: "correo") @db.VarChar(100)
+  password   String       @db.VarChar(255)
+  rol        usuarios_rol
+  activo     Boolean?     @default(true)
 
+  empresa    empresas?    @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+
+  @@index([empresa_id], map: "empresa_id")
   @@index([tienda_id], map: "tienda_id")
+}
+
+model clientes {
+  id         Int       @id @default(autoincrement())
+  empresa_id Int
+  nombre     String    @db.VarChar(150)
+  telefono   String?   @db.VarChar(20)
+  direccion  String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+
+  empresa    empresas? @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+  @@index([empresa_id], map: "empresa_id")
 }
 
 model ventas {
   id          Int                @id @default(autoincrement())
   tienda_id   Int
   usuario_id  Int
+  cliente_id  Int?               // Para ventas al crédito
   fecha       DateTime?          @default(now()) @db.Timestamp(0)
   total       Decimal            @db.Decimal(10, 2)
   metodo_pago ventas_metodo_pago
 
   @@index([tienda_id], map: "tienda_id")
   @@index([usuario_id], map: "usuario_id")
+  @@index([cliente_id], map: "cliente_id")
+}
+
+model cuentas_por_cobrar {
+  id          Int       @id @default(autoincrement())
+  venta_id    Int       @unique
+  cliente_id  Int
+  tienda_id   Int
+  monto_total Decimal   @db.Decimal(10, 2)
+  saldo_pendiente Decimal @db.Decimal(10, 2)
+  estado      cxc_estado @default(pendiente)
+  fecha_creacion DateTime? @default(now()) @db.Timestamp(0)
+  fecha_vencimiento DateTime? @db.Date
+
+  @@index([cliente_id], map: "cliente_id")
+  @@index([tienda_id], map: "tienda_id")
+}
+
+enum cxc_estado {
+  pendiente
+  pagado
+  anulado
 }
 
 enum usuarios_rol {
+  superadmin
   due_o         @map("dueño")
   administrador
   cajero
@@ -115,4 +188,11 @@ enum ventas_metodo_pago {
   efectivo
   tarjeta
   transferencia
+  credito
+}
+
+enum empresas_plan_contratado {
+  basico
+  premium
+  ilimitado
 }

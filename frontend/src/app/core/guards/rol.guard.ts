@@ -24,9 +24,9 @@ export const rolGuard: CanActivateFn = (route, state) => {
   // Si no tiene permiso, lo mandamos a su sección segura por defecto
   alert('⚠️ No tienes permisos para acceder a este módulo.');
   if (usuarioLogueado.rol === 'cajero') {
-    router.navigate(['/dashboard/ventas']);
+    router.navigate(['/panel/pos']);
   } else {
-    router.navigate(['/dashboard']);
+    router.navigate(['/panel/dashboard']);
   }
   return false;
 };

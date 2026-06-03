@@ -1,46 +1,54 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { LayoutComponent } from './pages/dashboard/layout/layout.component';
-import { VentasComponent } from './pages/dashboard/ventas/ventas.component';
-import { ProductosComponent } from './pages/dashboard/productos/productos.component';
-import { UsuariosComponent } from './pages/dashboard/usuarios/usuarios.component'; 
 import { rolGuard } from './core/guards/rol.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  
+  // 👔 SUPERADMIN: Gestión de licencias y empresas (SaaS)
   {
-    path: 'dashboard',
-    component: LayoutComponent,
+    path: 'superadmin',
     canActivate: [rolGuard],
-    data: { roles: ['dueño', 'administrador', 'cajero'] }, // Cualquiera logueado entra al Layout
+    data: { roles: ['superadmin'] },
+    loadComponent: () => import('./pages/superadmin/superadmin-dashboard.component').then(m => m.SuperadminDashboardComponent)
+  },
+
+  // 📦 PANEL PRINCIPAL (Unificado para Dueño, Admin y Cajero)
+  {
+    path: 'panel',
+    canActivate: [rolGuard],
+    data: { roles: ['dueño', 'administrador', 'cajero'] },
+    loadComponent: () => import('./pages/admin/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
-      { path: '', redirectTo: 'ventas', pathMatch: 'full' },
-      
-      // 🛒 El cajero y los de arriba pueden vender
+      // Si entra a /panel, redirige según el rol
+      { path: '', redirectTo: 'pos', pathMatch: 'full' },
       { 
-        path: 'ventas', 
-        component: VentasComponent, 
-        canActivate: [rolGuard], 
-        data: { roles: ['dueño', 'administrador', 'cajero'] } 
+        path: 'dashboard', 
+        loadComponent: () => import('./pages/dashboard/layout/layout.component').then(m => m.LayoutComponent) 
       },
-      
-      // 📦 Catálogo Global: Solo Dueño y Administrador
+      { 
+        path: 'pos', 
+        loadComponent: () => import('./pages/pos/pos-terminal.component').then(m => m.PosTerminalComponent) 
+      },
       { 
         path: 'productos', 
-        component: ProductosComponent, 
-        canActivate: [rolGuard], 
-        data: { roles: ['dueño', 'administrador'] } 
+        loadComponent: () => import('./pages/dashboard/productos/productos.component').then(m => m.ProductosComponent) 
       },
-      
-      // 👥 Control de Personal: El Dueño (Superadmin) crea Admins/Cajeros, el Admin crea Cajeros
+      { 
+        path: 'compras', 
+        loadComponent: () => import('./pages/dashboard/compras/compras.component').then(m => m.ComprasComponent) 
+      },
+      { 
+        path: 'deudas', 
+        loadComponent: () => import('./pages/dashboard/deudas/deudas.component').then(m => m.DeudasComponent) 
+      },
       { 
         path: 'usuarios', 
-        component: UsuariosComponent, 
-        canActivate: [rolGuard], 
-        data: { roles: ['dueño', 'administrador'] } 
+        loadComponent: () => import('./pages/dashboard/usuarios/usuarios.component').then(m => m.UsuariosComponent) 
       }
     ]
   },
+
   { path: '**', redirectTo: 'login' }
 ];
