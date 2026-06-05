@@ -1,0 +1,49 @@
+<div class="page-container">
+  <h2 class="page-title">🛒 Compras</h2>
+  
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" class="form">
+      <div class="form-group">
+        <label class="form-label">Código de Barras</label>
+        <input 
+          type="text" 
+          [(ngModel)]="formData.codigoBarras" 
+          name="codigoBarras"
+          class="form-input"
+          placeholder="Ej: 7501055311234"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cantidad</label>
+        <input 
+          type="number" 
+          [(ngModel)]="formData.cantidad" 
+          name="cantidad"
+          class="form-input"
+          placeholder="Cantidad a comprar"
+          min="1"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Sucursal Destino</label>
+        <select [(ngModel)]="formData.sucursal" name="sucursal" class="form-select">
+          <option *ngFor="let sucursal of sucursales" [value]="sucursal">{{ sucursal }}</option>
+        </select>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <span class="material-icons btn-icon">add_shopping_cart</span>
+        Registrar Compra
+      </button>
+    </form>
+
+    <div *ngIf="mensaje" class="alert-message" [class.success]="tipoMensaje === 'success'" [class.error]="tipoMensaje === 'error'">
+      <span class="material-icons alert-icon">{{ tipoMensaje === 'success' ? 'check_circle' : 'error' }}</span>
+      <span>{{ mensaje }}</span>
+    </div>
+  </div>
+</div>

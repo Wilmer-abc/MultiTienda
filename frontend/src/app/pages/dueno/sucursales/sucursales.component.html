@@ -1,0 +1,53 @@
+<div class="page-container">
+  <h2 class="page-title">🏪 Sucursales</h2>
+  
+  <button (click)="toggleFormulario()" class="add-btn">
+    <span class="material-icons btn-icon">add</span>
+    Nueva Sucursal
+  </button>
+
+  <div *ngIf="mostrandoFormulario" class="form-card">
+    <form (ngSubmit)="onSubmit()" class="form">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input 
+          type="text" 
+          [(ngModel)]="formData.nombre" 
+          name="nombre"
+          class="form-input"
+          placeholder="Ej: Zona 15"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Dirección</label>
+        <input 
+          type="text" 
+          [(ngModel)]="formData.direccion" 
+          name="direccion"
+          class="form-input"
+          placeholder="Ej: Calle Principal 123"
+          required
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="toggleFormulario()" class="cancel-btn">Cancelar</button>
+        <button type="submit" class="submit-btn">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="sucursales-list">
+    <div *ngFor="let sucursal of sucursales" class="sucursal-card">
+      <div class="sucursal-header">
+        <span class="material-icons sucursal-icon">store</span>
+        <div class="sucursal-info">
+          <h3 class="sucursal-name">{{ sucursal.nombre }}</h3>
+          <p class="sucursal-direccion">{{ sucursal.direccion }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

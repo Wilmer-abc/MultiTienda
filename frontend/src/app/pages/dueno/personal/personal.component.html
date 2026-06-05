@@ -1,0 +1,71 @@
+<div class="page-container">
+  <h2 class="page-title">👥 Personal</h2>
+  
+  <button (click)="toggleFormulario()" class="add-btn">
+    <span class="material-icons btn-icon">add</span>
+    Nuevo Usuario
+  </button>
+
+  <div *ngIf="mostrandoFormulario" class="form-card">
+    <form (ngSubmit)="onSubmit()" class="form">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input 
+          type="text" 
+          [(ngModel)]="formData.nombre" 
+          name="nombre"
+          class="form-input"
+          placeholder="Nombre completo"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input 
+          type="email" 
+          [(ngModel)]="formData.email" 
+          name="email"
+          class="form-input"
+          placeholder="correo@empresa.com"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Rol</label>
+        <select [(ngModel)]="formData.rol" name="rol" class="form-select">
+          <option *ngFor="let rol of roles" [value]="rol">{{ rol }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Sucursal</label>
+        <select [(ngModel)]="formData.sucursal" name="sucursal" class="form-select">
+          <option *ngFor="let sucursal of sucursales" [value]="sucursal">{{ sucursal }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="toggleFormulario()" class="cancel-btn">Cancelar</button>
+        <button type="submit" class="submit-btn">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="usuarios-list">
+    <div *ngFor="let usuario of usuarios" class="usuario-card">
+      <div class="usuario-header">
+        <span class="material-icons usuario-icon">person</span>
+        <div class="usuario-info">
+          <h3 class="usuario-name">{{ usuario.nombre }}</h3>
+          <p class="usuario-email">{{ usuario.email }}</p>
+        </div>
+      </div>
+      <div class="usuario-body">
+        <span class="badge rol-badge">{{ usuario.rol }}</span>
+        <span class="badge sucursal-badge">{{ usuario.sucursal }}</span>
+      </div>
+    </div>
+  </div>
+</div>

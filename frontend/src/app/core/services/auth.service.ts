@@ -1,54 +1,71 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { MockDataService, User } from './mock-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // URL de tu backend de NestJS
-  private apiUrl = '/api/auth';
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
-
-  // 1. Método para hacer Login
-  login(credenciales: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credenciales).pipe(
-      tap(res => {
-        // Si el backend nos responde con éxito, guardamos el Token y la info del usuario
-        if (res && res.access_token) {
-          localStorage.setItem('access_token', res.access_token);
-          localStorage.setItem('usuario', JSON.stringify(res.usuario));
-        }
-      })
-    );
+  constructor(private mockDataService: MockDataService) {
+    // Recuperar sesión del localStorage al iniciar
+    const savedUser = localStorage.getItem('usuario');
+    if (savedUser) {
+      this.currentUserSubject.next(JSON.parse(savedUser));
+    }
   }
 
-  // 2. Método para cerrar sesión (Limpieza)
+  login(email: string, contrasena: string): { success: boolean; user?: User; error?: string } {
+    const user = this.mockDataService.USERS_MOCK.find(
+      u => u.email === email && u.contrasena === contrasena
+    );
+
+    if (user) {
+      this.currentUserSubject.next(user);
+      localStorage.setItem('usuario', JSON.stringify(user));
+      return { success: true, user };
+    }
+
+    return { success: false, error: 'Credenciales inválidas' };
+  }
+
   logout(): void {
-    localStorage.removeItem('access_token');
+    this.currentUserSubject.next(null);
     localStorage.removeItem('usuario');
   }
 
-  // 3. Obtener el Token guardado
-  getToken(): string | null {
-    return localStorage.getItem('access_token');
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 
-  // 4. Obtener los datos del usuario logueado (saber si es cajero o administrador)
-  getUsuario(): any {
-    const usuario = localStorage.getItem('usuario');
-    return usuario ? JSON.parse(usuario) : null;
-  }
-
-  // 5. Verificar si el usuario está autenticado
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return !!this.currentUserSubject.value;
   }
 
-  // 6. Verificar si tiene un rol específico (Útil para proteger vistas del cajero)
-  hasRole(rol: string): boolean {
-    const usuario = this.getUsuario();
-    return usuario && usuario.rol === rol;
+  hasRole(role: string): boolean {
+    const user = this.getCurrentUser();
+    return user ? user.role === role : false;
+  }
+
+  getCurrentUserRole(): string | null {
+    const user = this.getCurrentUser();
+    return user ? user.role : null;
+  }
+
+  getSucursal(): string | null {
+    const user = this.getCurrentUser();
+    return user && user.sucursal ? user.sucursal : null;
+  }
+
+  // Métodos de compatibilidad para componentes antiguos
+  getUsuario(): User | null {
+    return this.getCurrentUser();
+  }
+
+  getToken(): string | null {
+    const user = this.getCurrentUser();
+    return user ? user.email : null;
   }
 }

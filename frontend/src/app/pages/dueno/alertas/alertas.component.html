@@ -1,0 +1,40 @@
+<div class="page-container">
+  <h2 class="page-title">⚠️ Alertas Stock</h2>
+  
+  <div class="filter-section">
+    <label class="filter-label">Sucursal:</label>
+    <select [(ngModel)]="sucursalSeleccionada" (change)="onSucursalChange()" class="filter-select">
+      <option *ngFor="let sucursal of sucursales" [value]="sucursal">{{ sucursal }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="productosBajoStock.length === 0" class="empty-state">
+    <span class="material-icons empty-icon">check_circle</span>
+    <p class="empty-text">No hay productos con stock bajo</p>
+  </div>
+
+  <div class="alerts-list">
+    <div *ngFor="let producto of productosBajoStock" class="alert-card">
+      <div class="alert-header">
+        <img [src]="producto.imagen" [alt]="producto.nombre" class="product-image" />
+        <div class="product-info">
+          <h3 class="product-name">{{ producto.nombre }}</h3>
+          <p class="product-category">{{ producto.categoria }}</p>
+        </div>
+      </div>
+      <div class="alert-body">
+        <div class="stock-info">
+          <span class="stock-label">Stock Actual:</span>
+          <span class="stock-value low">{{ producto.stock_por_sucursal[sucursalSeleccionada] || 0 }}</span>
+        </div>
+        <div class="stock-info">
+          <span class="stock-label">Mínimo:</span>
+          <span class="stock-value">{{ producto.stock_minimo }}</span>
+        </div>
+      </div>
+      <div class="alert-footer">
+        <span class="alert-badge">¡Stock Bajo!</span>
+      </div>
+    </div>
+  </div>
+</div>

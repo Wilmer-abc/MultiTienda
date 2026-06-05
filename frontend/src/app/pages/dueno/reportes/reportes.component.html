@@ -1,0 +1,39 @@
+<div class="page-container">
+  <h2 class="page-title">📊 Reportes</h2>
+  
+  <div class="filter-section">
+    <label class="filter-label">Sucursal:</label>
+    <select [(ngModel)]="sucursalSeleccionada" (change)="onSucursalChange()" class="filter-select">
+      <option *ngFor="let sucursal of sucursales" [value]="sucursal">{{ sucursal }}</option>
+    </select>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="material-icons stat-icon">trending_up</span>
+        <h3 class="stat-title">Ganancias Brutas</h3>
+      </div>
+      <p class="stat-value">Q{{ gananciasBrutas.toFixed(2) }}</p>
+      <p class="stat-subtitle">Total ventas</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="material-icons stat-icon">account_balance_wallet</span>
+        <h3 class="stat-title">Ganancias Netas</h3>
+      </div>
+      <p class="stat-value">Q{{ gananciasNetas.toFixed(2) }}</p>
+      <p class="stat-subtitle">Después de gastos</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="material-icons stat-icon">receipt_long</span>
+        <h3 class="stat-title">Deudas Proveedores</h3>
+      </div>
+      <p class="stat-value">Q{{ deudasProveedores.toFixed(2) }}</p>
+      <p class="stat-subtitle">Cuentas pendientes</p>
+    </div>
+  </div>
+</div>

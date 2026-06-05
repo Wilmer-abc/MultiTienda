@@ -1,0 +1,103 @@
+<div class="page-container">
+  <h2 class="page-title">🛒 Punto de Venta</h2>
+  
+  <div class="pos-layout">
+    <div class="left-panel">
+      <div class="search-section">
+        <input 
+          type="text" 
+          [(ngModel)]="busquedaManual" 
+          (input)="onBusquedaManual()"
+          class="search-input"
+          placeholder="Buscar producto por nombre o código..."
+        />
+        <button (click)="toggleEscanner()" class="scanner-btn" [class.active]="escannerActivo">
+          <span class="material-icons">{{ escannerActivo ? 'qr_code_scanner' : 'qr_code' }}</span>
+          {{ escannerActivo ? 'Escáner Activo' : 'Activar Escáner' }}
+        </button>
+      </div>
+
+      <div *ngIf="escannerActivo" class="scanner-container">
+        <div id="reader"></div>
+      </div>
+
+      <div *ngIf="productosBuscados.length > 0" class="search-results">
+        <div *ngFor="let producto of productosBuscados" class="result-item" (click)="seleccionarProducto(producto)">
+          <img [src]="producto.imagen" [alt]="producto.nombre" class="result-image" />
+          <div class="result-info">
+            <h4 class="result-name">{{ producto.nombre }}</h4>
+            <p class="result-price">Q{{ producto.precio_venta.toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="cart-section">
+        <h3 class="cart-title">Carrito</h3>
+        
+        <div *ngIf="cart.length === 0" class="empty-cart">
+          <span class="material-icons empty-icon">shopping_cart</span>
+          <p>El carrito está vacío</p>
+        </div>
+
+        <div class="cart-items">
+          <div *ngFor="let item of cart" class="cart-item">
+            <img [src]="item.product.imagen" [alt]="item.product.nombre" class="cart-item-image" />
+            <div class="cart-item-info">
+              <h4 class="cart-item-name">{{ item.product.nombre }}</h4>
+              <p class="cart-item-price">Q{{ item.product.precio_venta.toFixed(2) }}</p>
+            </div>
+            <div class="cart-item-controls">
+              <button (click)="actualizarCantidad(item.product.codigo_barras, item.cantidad - 1)" class="qty-btn">-</button>
+              <span class="qty-value">{{ item.cantidad }}</span>
+              <button (click)="actualizarCantidad(item.product.codigo_barras, item.cantidad + 1)" class="qty-btn">+</button>
+              <button (click)="eliminarDelCarrito(item.product.codigo_barras)" class="remove-btn">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>Q{{ total.toFixed(2) }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>Q{{ total.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <div class="payment-section">
+          <label class="payment-label">Método de Pago:</label>
+          <div class="payment-options">
+            <button 
+              (click)="metodoPago = 'EFECTIVO'" 
+              class="payment-btn" 
+              [class.active]="metodoPago === 'EFECTIVO'">
+              <span class="material-icons">payments</span>
+              Efectivo
+            </button>
+            <button 
+              (click)="metodoPago = 'TARJETA'" 
+              class="payment-btn" 
+              [class.active]="metodoPago === 'TARJETA'">
+              <span class="material-icons">credit_card</span>
+              Tarjeta
+            </button>
+          </div>
+        </div>
+
+        <div class="cart-actions">
+          <button (click)="limpiarCarrito()" class="clear-btn">Limpiar</button>
+          <button (click)="procesarVenta()" [disabled]="cart.length === 0" class="checkout-btn">
+            <span class="material-icons">check_circle</span>
+            Procesar Venta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

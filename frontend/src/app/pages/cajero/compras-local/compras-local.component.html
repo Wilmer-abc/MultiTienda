@@ -1,0 +1,57 @@
+<div class="page-container">
+  <h2 class="page-title">📦 Compras Local</h2>
+  
+  <div class="info-card">
+    <span class="material-icons info-icon">info</span>
+    <p>Registra compras de productos para aumentar el stock en tu sucursal.</p>
+  </div>
+
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" class="form">
+      <div class="form-group">
+        <label class="form-label">Código de Barras</label>
+        <input 
+          type="text" 
+          [(ngModel)]="formData.codigoBarras" 
+          name="codigoBarras"
+          class="form-input"
+          placeholder="Ej: 7501055311234"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cantidad</label>
+        <input 
+          type="number" 
+          [(ngModel)]="formData.cantidad" 
+          name="cantidad"
+          class="form-input"
+          placeholder="Cantidad recibida"
+          min="1"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Sucursal</label>
+        <input 
+          type="text" 
+          [value]="sucursal" 
+          class="form-input"
+          disabled
+        />
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <span class="material-icons btn-icon">add_box</span>
+        Registrar Compra
+      </button>
+    </form>
+
+    <div *ngIf="mensaje" class="alert-message" [class.success]="tipoMensaje === 'success'" [class.error]="tipoMensaje === 'error'">
+      <span class="material-icons alert-icon">{{ tipoMensaje === 'success' ? 'check_circle' : 'error' }}</span>
+      <span>{{ mensaje }}</span>
+    </div>
+  </div>
+</div>

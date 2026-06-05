@@ -1,0 +1,16 @@
+<div class="page-container">
+  <h2 class="page-title">🏢 Empresas</h2>
+  
+  <div class="empresas-list">
+    <div *ngFor="let empresa of empresas" class="empresa-card">
+      <div class="card-header">
+        <span class="material-icons card-icon">business</span>
+        <h3 class="card-title">{{ empresa.nombre }}</h3>
+      </div>
+      <div class="card-body">
+        <p class="card-info"><strong>NIT:</strong> {{ empresa.nit }}</p>
+        <p class="card-info"><strong>Fecha de creación:</strong> {{ empresa.fecha_creacion }}</p>
+      </div>
+    </div>
+  </div>
+</div>

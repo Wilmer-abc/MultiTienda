@@ -1,0 +1,67 @@
+<div class="page-container">
+  <h2 class="page-title">💰 Caja</h2>
+  
+  <div class="filter-section">
+    <label class="filter-label">Filtrar por:</label>
+    <select [(ngModel)]="filtroFecha" (change)="onFiltroChange()" class="filter-select">
+      <option value="hoy">Hoy</option>
+      <option value="semana">Última Semana</option>
+      <option value="mes">Último Mes</option>
+      <option value="todas">Todas</option>
+    </select>
+  </div>
+
+  <div class="stats-card">
+    <div class="stat-item">
+      <span class="material-icons stat-icon">attach_money</span>
+      <div class="stat-info">
+        <p class="stat-label">Total Ventas</p>
+        <p class="stat-value">Q{{ totalVentas.toFixed(2) }}</p>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="material-icons stat-icon">receipt_long</span>
+      <div class="stat-info">
+        <p class="stat-label">Transacciones</p>
+        <p class="stat-value">{{ ventasFiltradas.length }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="ventasFiltradas.length === 0" class="empty-state">
+    <span class="material-icons empty-icon">receipt</span>
+    <p class="empty-text">No hay ventas registradas en este periodo</p>
+  </div>
+
+  <div class="ventas-list">
+    <div *ngFor="let venta of ventasFiltradas" class="venta-card">
+      <div class="venta-header">
+        <div class="venta-info">
+          <h3 class="venta-id">#{{ venta.id }}</h3>
+          <p class="venta-fecha">{{ venta.fecha | date:'short' }}</p>
+        </div>
+        <div class="venta-metodo">
+          <span class="material-icons metodo-icon" [style.color]="getMetodoPagoColor(venta.metodo_pago)">
+            {{ getMetodoPagoIcon(venta.metodo_pago) }}
+          </span>
+          <span class="metodo-text">{{ venta.metodo_pago }}</span>
+        </div>
+      </div>
+      
+      <div class="venta-body">
+        <div class="venta-items">
+          <div *ngFor="let item of venta.items" class="venta-item">
+            <span class="item-name">{{ item.product.nombre }}</span>
+            <span class="item-qty">x{{ item.cantidad }}</span>
+            <span class="item-price">Q{{ (item.product.precio_venta * item.cantidad).toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="venta-footer">
+        <span class="venta-cajero">{{ venta.cajero }}</span>
+        <span class="venta-total">Q{{ venta.total.toFixed(2) }}</span>
+      </div>
+    </div>
+  </div>
+</div>

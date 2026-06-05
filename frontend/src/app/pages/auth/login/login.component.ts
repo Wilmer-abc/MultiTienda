@@ -49,36 +49,28 @@ export class LoginComponent {
     this.errorMensaje = null;
     this.limpiarErroresValidacion();
 
-    // Disparamos la petición al servicio
-    this.authService.login(this.credenciales).subscribe({
-      next: (res) => {
-        this.cargando = false;
-        
-        // Agregamos un console.log temporal para que veas EXACTAMENTE qué te responde NestJS
-        console.log('Respuesta exitosa del Backend:', res);
+    // Usar el servicio de autenticación con Mock Data
+    const result = this.authService.login(this.credenciales.correo, this.credenciales.password);
+    
+    this.cargando = false;
 
-        // Redirección basada en la nueva arquitectura SaaS
-        const rol = res.usuario.rol;
-        
-        if (rol === 'superadmin') {
-          this.router.navigate(['/superadmin']);
-        } else if (rol === 'cajero') {
-          this.router.navigate(['/panel/pos']);
-        } else {
-          // dueño o administrador
-          this.router.navigate(['/panel/dashboard']);
-        }
-      },
-      error: (err) => {
-        this.cargando = false;
-        
-        // Esto imprimirá en la consola el porqué exacto del rechazo del servidor
-        console.error('Error detallado del servidor:', err);
-        
-        // Capturamos el mensaje de error para mostrarlo en el HTML
-        this.manejarErrorServidor(err);
+    if (result.success && result.user) {
+      console.log('Login exitoso:', result.user);
+      
+      // Redirección basada en el rol
+      const rol = result.user.role;
+      
+      if (rol === 'SUPERADMIN') {
+        this.router.navigate(['/superadmin']);
+      } else if (rol === 'CAJERO') {
+        this.router.navigate(['/cajero']);
+      } else if (rol === 'DUENO') {
+        this.router.navigate(['/dueno']);
       }
-    });
+    } else {
+      this.errorMensaje = result.error || 'Credenciales inválidas';
+      this.erroresValidacion.password = 'Credenciales incorrectas';
+    }
   }
 
   // Método para validar campos en tiempo real

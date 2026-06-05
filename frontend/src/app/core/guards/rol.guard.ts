@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const rolGuard: CanActivateFn = (route, state) => {
+export const rolGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -12,21 +12,22 @@ export const rolGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  // 2. Extraemos los roles permitidos para esta ruta específica desde el mapa de rutas
-  const rolesPermitidos = route.data['roles'] as Array<string>;
-  const usuarioLogueado = authService.getUsuario();
+  const usuarioLogueado = authService.getCurrentUser();
 
-  // 3. Validamos si el rol del usuario de la base de datos tiene permiso
-  if (rolesPermitidos && rolesPermitidos.includes(usuarioLogueado.rol)) {
-    return true; // ¡Pase adelante, ingeniero!
+  if (!usuarioLogueado) {
+    router.navigate(['/login']);
+    return false;
   }
 
-  // Si no tiene permiso, lo mandamos a su sección segura por defecto
-  alert('⚠️ No tienes permisos para acceder a este módulo.');
-  if (usuarioLogueado.rol === 'cajero') {
-    router.navigate(['/panel/pos']);
-  } else {
-    router.navigate(['/panel/dashboard']);
+  // 2. Extraemos el rol permitido de la ruta
+  const rolPermitido = route.data['rol'] as string;
+
+  // 3. Validamos si el rol del usuario tiene permiso
+  if (rolPermitido && usuarioLogueado.role === rolPermitido) {
+    return true;
   }
+
+  // Si no tiene permiso, redirigir a login
+  router.navigate(['/login']);
   return false;
 };

@@ -1,0 +1,58 @@
+<div class="page-container">
+  <h2 class="page-title">⚙️ Ajustes</h2>
+  
+  <div class="settings-card">
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="material-icons setting-icon">notifications</span>
+        <div>
+          <h3 class="setting-title">Notificaciones</h3>
+          <p class="setting-description">Recibir alertas y actualizaciones</p>
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" [checked]="settings.notificaciones" (change)="toggleNotificaciones()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="material-icons setting-icon">dark_mode</span>
+        <div>
+          <h3 class="setting-title">Modo Oscuro</h3>
+          <p class="setting-description">Activar tema oscuro</p>
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" [checked]="settings.modoOscuro" (change)="toggleModoOscuro()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="material-icons setting-icon">language</span>
+        <div>
+          <h3 class="setting-title">Idioma</h3>
+          <p class="setting-description">Español</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="material-icons setting-icon">schedule</span>
+        <div>
+          <h3 class="setting-title">Zona Horaria</h3>
+          <p class="setting-description">America/Guatemala</p>
+        </div>
+      </div>
+    </div>
+
+    <button (click)="guardarCambios()" class="save-btn">
+      <span class="material-icons btn-icon">save</span>
+      Guardar Cambios
+    </button>
+  </div>
+</div>
